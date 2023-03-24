@@ -6,6 +6,9 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {{-- <link rel="stylesheet" href="{{ asset('font-awesone/css/all.min.css') }}">
+  <script src="{{ asset('font-awesone/js/pro.min.js') }}"></script> --}}
+  <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro-v6@44659d9/css/all.min.css" rel="stylesheet" type="text/css" />
 
   <!-- Bootstrap CSS v5.2.1 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -18,7 +21,7 @@
     <!-- place navbar here -->
     @include('includes.navbar')
   </header>
-  <main class="vh-100">
+  <main class="container">
     @yield('content')
   </main>
   <footer>

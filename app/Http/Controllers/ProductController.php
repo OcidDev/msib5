@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +16,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $item = Category::all();
-        return view('pages.category.index',compact('item'));
+        $item = Product::all();
+        return view('pages.product.index',compact('item'));
     }
 
     /**
@@ -26,7 +27,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('pages.category.create');
+        $category = Category::all();
+        return view('pages.product.create',compact('category'));
     }
 
     /**
@@ -38,14 +40,17 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|unique:categories,name',
+
+            'name' => 'required|unique:products,name',
             'description' => 'required',
-            'icon' => 'required|image',
+            'photo' => 'required|image',
+            'price' => 'required|integer',
+            'categories_id' => 'required',
         ]);
-        $validated['icon'] = $request->file('icon')->store('image', 'public');
+        $validated['photo'] = $request->file('photo')->store('image', 'public');
         $validated['slug'] = Str::slug($request->name);
-        Category::create($validated);
-        return redirect()->route('category.index');
+        Product::create($validated);
+        return redirect()->route('product.index');
 
     }
 
@@ -68,8 +73,9 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        $items = Category::findOrFail($id);
-        return view('pages.category.edit',compact('items'));
+        $category = Category::all();
+        $items = Product::findOrFail($id);
+        return view('pages.product.edit',compact('items','category'));
     }
 
     /**
@@ -80,17 +86,23 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'name' => 'string|required|unique:categories,name,'.$id,
-            'description' => 'required',
-            'icon' => 'image',
-        ]);
-        $request->file('icon') == !NULL ? $validated['icon'] = $request->file('icon')->store('image', 'public') : '' ;
-        $validated['slug'] = Str::slug($request->name);
-        Category::find($id)->update($validated);
-        return redirect()->route('category.index');
-    }
+{
+    $validated = $request->validate([
+        'name' => 'string|required|unique:products,name,'.$id,
+        'description' => 'required|string',
+        'photo' => 'image',
+        'price' => 'integer|required',
+        'categories_id' => 'required',
+    ]);
+
+    $request->file('photo') != NULL ? $validated['photo'] = $request->file('photo')->store('image', 'public') : '' ;
+
+    $validated['slug'] = Str::slug($validated['name']);
+
+    Product::find($id)->update($validated);
+
+    return redirect()->route('product.index');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -100,15 +112,8 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        // $cek = Category::where('id','1');
-        // if($cek){
-        //     Category::where('id',1)->update(['name'=>'uncategory'],['slug'=>'uncategory']);
-        // }else{
-
-        // }
-        $deleted = Category::find($id);
+        $deleted = Product::find($id);
         $deleted->delete();
         return back();
-
     }
 }
