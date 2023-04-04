@@ -88,6 +88,8 @@ class CartController extends Controller
         $cart -> update([
             'qty' => $request-> qty,
         ]);
+
+        return redirect()->route('cart.index');
     }
 
     /**
@@ -98,6 +100,8 @@ class CartController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $deleted = Cart::find($id);
+        $deleted->delete();
+        return back();
     }
 }
